@@ -98,6 +98,7 @@ curl http://localhost:8000/api/productos/
 
 También se puede probar con **Postman**, **Bruno** o **ThunderClient**.
 
-## Autor
+## Autores
 
 - Francisco Ambrogio
+- Nicolas Lacroix
