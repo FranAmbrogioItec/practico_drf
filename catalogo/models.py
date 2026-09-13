@@ -33,3 +33,36 @@ class Producto(models.Model):
 
     class Meta:
         ordering = ["-creado"]
+
+
+class Resena(models.Model):
+    """
+    Reseña de un cliente sobre un producto.
+    Relación Foreign Key: un Producto puede tener muchas Reseñas.
+    """
+
+    CALIFICACIONES = [
+        (1, "1 - Muy malo"),
+        (2, "2 - Malo"),
+        (3, "3 - Regular"),
+        (4, "4 - Bueno"),
+        (5, "5 - Excelente"),
+    ]
+
+    producto = models.ForeignKey(
+        Producto,
+        on_delete=models.CASCADE,
+        related_name="resenas",
+    )
+    autor = models.CharField(max_length=100)
+    comentario = models.TextField(blank=True)
+    calificacion = models.PositiveSmallIntegerField(choices=CALIFICACIONES)
+    creado = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.autor} → {self.producto.nombre} ({self.calificacion}/5)"
+
+    class Meta:
+        verbose_name = "Reseña"
+        verbose_name_plural = "Reseñas"
+        ordering = ["-creado"]

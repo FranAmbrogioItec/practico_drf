@@ -1,8 +1,8 @@
 {
   "info": {
-    "_postman_id": "14065f74-c029-4b51-aa77-43e4b2022e43",
-    "name": "Primer Practico DRF - Catalogo de Productos",
-    "description": "Coleccion para probar el CRUD de Productos y Categorias (Django + DRF)",
+    "_postman_id": "7fd11aa8-456e-4917-8267-5c485b29d828",
+    "name": "Practico DRF - Catalogo de Productos",
+    "description": "Coleccion para probar el CRUD de Categorias, Productos y Resenas (Django + DRF)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "0"
   },
@@ -292,7 +292,7 @@
           "response": []
         },
         {
-          "name": "5. Detalle de producto (GET)",
+          "name": "5. Detalle de producto - incluye resenas anidadas (GET)",
           "request": {
             "method": "GET",
             "header": [],
@@ -413,6 +413,234 @@
               "path": [
                 "api",
                 "productos",
+                "1"
+              ],
+              "port": "8000"
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Resenas",
+      "item": [
+        {
+          "name": "1. Crear resena (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/resenas/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "api",
+                "resenas"
+              ],
+              "port": "8000"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"producto\": 1,\n  \"autor\": \"Juan\",\n  \"comentario\": \"Excelente calidad de sonido\",\n  \"calificacion\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Listar resenas (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/resenas/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "api",
+                "resenas"
+              ],
+              "port": "8000"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "3. Filtrar resenas por producto (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/resenas/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "api",
+                "resenas"
+              ],
+              "port": "8000",
+              "query": [
+                {
+                  "key": "producto",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "4. Detalle de resena (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/resenas/1/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "api",
+                "resenas",
+                "1"
+              ],
+              "port": "8000"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "5. Actualizar resena completa (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/resenas/1/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "api",
+                "resenas",
+                "1"
+              ],
+              "port": "8000"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"producto\": 1,\n  \"autor\": \"Juan\",\n  \"comentario\": \"Editado\",\n  \"calificacion\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. Actualizar resena parcial (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/resenas/1/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "api",
+                "resenas",
+                "1"
+              ],
+              "port": "8000"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comentario\": \"Comentario editado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "7. Eliminar resena (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/resenas/1/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "api",
+                "resenas",
                 "1"
               ],
               "port": "8000"

@@ -1,9 +1,14 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 
-from .models import Producto, Categoria
-from .serializers import ProductoSerializer, CategoriaSerializer
+from .models import Producto, Categoria, Resena
+from .serializers import (
+    ProductoSerializer,
+    ProductoDetailSerializer,
+    CategoriaSerializer,
+    ResenaSerializer,
+)
 
 
 # ---------- PRODUCTOS ----------
@@ -53,7 +58,9 @@ def producto_detail(request, pk):
         )
 
     if request.method == "GET":
-        serializer = ProductoSerializer(producto)
+        # Usamos el serializer con reseñas anidadas solo en el detalle,
+        # para no sobrecargar el listado con datos que no siempre hacen falta.
+        serializer = ProductoDetailSerializer(producto)
         return Response(serializer.data)
 
     elif request.method == "PUT":
@@ -132,3 +139,37 @@ def categoria_detail(request, pk):
     elif request.method == "DELETE":
         categoria.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# ---------- RESEÑAS (Class-Based Views genéricas) ----------
+#
+# A diferencia de Producto/Categoria (vistas funcionales con @api_view,
+# práctico anterior), acá usamos Generic API Views: DRF ya resuelve el
+# GET/POST y GET/PUT/PATCH/DELETE con muy poco código, delegando en
+# queryset + serializer_class.
+
+class ResenaListCreateView(generics.ListCreateAPIView):
+    """
+    GET  /api/resenas/            -> lista todas las reseñas
+    GET  /api/resenas/?producto=1 -> lista las reseñas de un producto puntual
+    POST /api/resenas/            -> crea una reseña nueva
+    """
+    serializer_class = ResenaSerializer
+
+    def get_queryset(self):
+        queryset = Resena.objects.all()
+        producto_id = self.request.query_params.get("producto")
+        if producto_id:
+            queryset = queryset.filter(producto_id=producto_id)
+        return queryset
+
+
+class ResenaDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET    /api/resenas/<id>/ -> detalle de una reseña
+    PUT    /api/resenas/<id>/ -> actualiza (completo)
+    PATCH  /api/resenas/<id>/ -> actualiza parcialmente
+    DELETE /api/resenas/<id>/ -> elimina
+    """
+    queryset = Resena.objects.all()
+    serializer_class = ResenaSerializer
