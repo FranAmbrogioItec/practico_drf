@@ -14,8 +14,7 @@ class ResenaSerializer(serializers.ModelSerializer):
     """
     Serializer "plano" de Resena: se usa para crear/listar/editar reseñas
     directamente desde /api/resenas/. Expone el producto como PK (para poder
-    asignarlo al crear) y además su nombre de solo lectura, para no obligar
-    al cliente a pedir el producto aparte.
+    asignarlo al crear) y además su nombre de solo lectura.
     """
     producto_nombre = serializers.CharField(source="producto.nombre", read_only=True)
 
@@ -40,8 +39,7 @@ class ResenaSerializer(serializers.ModelSerializer):
 
 class ResenaNestedSerializer(serializers.ModelSerializer):
     """
-    Serializer anidado de Resena: se usa DENTRO de ProductoDetailSerializer,
-    por eso no repite el campo 'producto' (ya sabemos a qué producto pertenece).
+    Serializer anidado de Resena: se usa DENTRO de ProductoDetailSerializer.
     """
     class Meta:
         model = Resena
@@ -87,8 +85,7 @@ class ProductoSerializer(serializers.ModelSerializer):
 class ProductoDetailSerializer(ProductoSerializer):
     """
     Serializer de Producto con SERIALIZERS ANIDADOS: incluye la lista completa
-    de reseñas del producto (relación inversa de la FK). Se usa en el detalle
-    (GET /api/productos/<id>/) para no tener que pedir las reseñas aparte.
+    de reseñas del producto (relación inversa de la FK).
     """
     resenas = ResenaNestedSerializer(many=True, read_only=True)
 

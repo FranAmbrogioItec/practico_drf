@@ -1,17 +1,220 @@
 {
   "info": {
-    "_postman_id": "7fd11aa8-456e-4917-8267-5c485b29d828",
+    "_postman_id": "cdadb933-2edc-439c-bd0f-d6093d6669cd",
     "name": "Practico DRF - Catalogo de Productos",
-    "description": "Coleccion para probar el CRUD de Categorias, Productos y Resenas (Django + DRF)",
+    "description": "Coleccion para probar el catalogo de productos (Django + DRF).\n\nFlujo sugerido:\n1) Correr 'Autenticacion JWT > 1. Login' con el usuario admin (o el que hayas creado con createsuperuser). El request ya trae un script que guarda 'access' y 'refresh' en las variables de coleccion access_token / refresh_token automaticamente.\n2) Correr el resto de las carpetas: las requests marcadas 'requiere auth' usan access_token solas (Bearer Token).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "0"
   },
   "item": [
     {
-      "name": "Categorias",
+      "name": "Autenticacion JWT",
       "item": [
         {
-          "name": "1. Crear categoria (POST)",
+          "name": "1. Login - obtener tokens (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/token/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "api",
+                "token"
+              ],
+              "port": "8000"
+            },
+            "description": "Login: guarda automaticamente 'access' y 'refresh' en las variables de coleccion access_token / refresh_token (ver pestana Tests) para que el resto de las requests protegidas los usen solas.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin12345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const data = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', data.access);",
+                  "    pm.collectionVariables.set('refresh_token', data.refresh);",
+                  "    console.log('Tokens guardados en las variables de la coleccion.');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Refresh - renovar access token (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/token/refresh/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "api",
+                "token",
+                "refresh"
+              ],
+              "port": "8000"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const data = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', data.access);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. Verify - validar un token (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/token/verify/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "api",
+                "token",
+                "verify"
+              ],
+              "port": "8000"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{access_token}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categorias (ReadOnlyModelViewSet)",
+      "item": [
+        {
+          "name": "1. Listar categorias (GET, publico)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/categorias/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "api",
+                "categorias"
+              ],
+              "port": "8000"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "2. Detalle de categoria (GET, publico)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/categorias/1/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "api",
+                "categorias",
+                "1"
+              ],
+              "port": "8000"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "3. Intentar crear categoria (POST -> 405, ReadOnly)",
           "request": {
             "method": "POST",
             "header": [
@@ -36,140 +239,36 @@
               ],
               "port": "8000"
             },
-            "description": "",
+            "description": "CategoriaViewSet es ReadOnlyModelViewSet: esta request debe devolver 405 Method Not Allowed.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Electronica\"\n}",
+              "raw": "{\n  \"nombre\": \"No deberia poder crearse\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "2. Listar categorias (GET)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://127.0.0.1:8000/api/categorias/",
-              "protocol": "http",
-              "host": [
-                "127",
-                "0",
-                "0",
-                "1"
-              ],
-              "path": [
-                "api",
-                "categorias"
-              ],
-              "port": "8000"
             },
-            "description": ""
-          },
-          "response": []
-        },
-        {
-          "name": "3. Detalle de categoria (GET)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://127.0.0.1:8000/api/categorias/1/",
-              "protocol": "http",
-              "host": [
-                "127",
-                "0",
-                "0",
-                "1"
-              ],
-              "path": [
-                "api",
-                "categorias",
-                "1"
-              ],
-              "port": "8000"
-            },
-            "description": ""
-          },
-          "response": []
-        },
-        {
-          "name": "4. Actualizar categoria (PUT)",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "http://127.0.0.1:8000/api/categorias/1/",
-              "protocol": "http",
-              "host": [
-                "127",
-                "0",
-                "0",
-                "1"
-              ],
-              "path": [
-                "api",
-                "categorias",
-                "1"
-              ],
-              "port": "8000"
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Electronica y Tecnologia\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
                 }
-              }
+              ]
             }
-          },
-          "response": []
-        },
-        {
-          "name": "5. Eliminar categoria (DELETE)",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://127.0.0.1:8000/api/categorias/1/",
-              "protocol": "http",
-              "host": [
-                "127",
-                "0",
-                "0",
-                "1"
-              ],
-              "path": [
-                "api",
-                "categorias",
-                "1"
-              ],
-              "port": "8000"
-            },
-            "description": ""
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Productos",
+      "name": "Productos (api_view)",
       "item": [
         {
-          "name": "1. Crear producto (POST)",
+          "name": "1. Crear producto (POST, requiere auth)",
           "request": {
             "method": "POST",
             "header": [
@@ -203,12 +302,22 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "2. Listar productos (GET)",
+          "name": "2. Listar productos (GET, publico)",
           "request": {
             "method": "GET",
             "header": [],
@@ -232,7 +341,7 @@
           "response": []
         },
         {
-          "name": "3. Filtrar por categoria (GET)",
+          "name": "3. Filtrar por categoria (GET, publico)",
           "request": {
             "method": "GET",
             "header": [],
@@ -262,7 +371,7 @@
           "response": []
         },
         {
-          "name": "4. Filtrar por disponibilidad (GET)",
+          "name": "4. Filtrar por disponibilidad (GET, publico)",
           "request": {
             "method": "GET",
             "header": [],
@@ -292,7 +401,7 @@
           "response": []
         },
         {
-          "name": "5. Detalle de producto - incluye resenas anidadas (GET)",
+          "name": "5. Detalle de producto - incluye resenas anidadas (GET, publico)",
           "request": {
             "method": "GET",
             "header": [],
@@ -317,7 +426,7 @@
           "response": []
         },
         {
-          "name": "6. Actualizar producto completo (PUT)",
+          "name": "6. Actualizar producto completo (PUT, requiere auth)",
           "request": {
             "method": "PUT",
             "header": [
@@ -352,12 +461,22 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "7. Actualizar producto parcial (PATCH)",
+          "name": "7. Actualizar producto parcial (PATCH, requiere auth)",
           "request": {
             "method": "PATCH",
             "header": [
@@ -392,12 +511,22 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "8. Eliminar producto (DELETE)",
+          "name": "8. Eliminar producto (DELETE, requiere auth)",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -417,17 +546,27 @@
               ],
               "port": "8000"
             },
-            "description": ""
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Resenas",
+      "name": "Resenas (ModelViewSet)",
       "item": [
         {
-          "name": "1. Crear resena (POST)",
+          "name": "1. Crear resena (POST, requiere auth)",
           "request": {
             "method": "POST",
             "header": [
@@ -461,12 +600,22 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "2. Listar resenas (GET)",
+          "name": "2. Listar resenas (GET, publico)",
           "request": {
             "method": "GET",
             "header": [],
@@ -490,7 +639,7 @@
           "response": []
         },
         {
-          "name": "3. Filtrar resenas por producto (GET)",
+          "name": "3. Filtrar resenas por producto (GET, publico)",
           "request": {
             "method": "GET",
             "header": [],
@@ -520,7 +669,7 @@
           "response": []
         },
         {
-          "name": "4. Detalle de resena (GET)",
+          "name": "4. Detalle de resena (GET, publico)",
           "request": {
             "method": "GET",
             "header": [],
@@ -545,7 +694,7 @@
           "response": []
         },
         {
-          "name": "5. Actualizar resena completa (PUT)",
+          "name": "5. Actualizar resena completa (PUT, requiere auth)",
           "request": {
             "method": "PUT",
             "header": [
@@ -580,12 +729,22 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "6. Actualizar resena parcial (PATCH)",
+          "name": "6. Actualizar resena parcial (PATCH, requiere auth)",
           "request": {
             "method": "PATCH",
             "header": [
@@ -620,12 +779,22 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "7. Eliminar resena (DELETE)",
+          "name": "7. Eliminar resena (DELETE, requiere auth)",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -645,7 +814,56 @@
               ],
               "port": "8000"
             },
-            "description": ""
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8. Intentar crear resena SIN token (POST -> 401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/resenas/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "api",
+                "resenas"
+              ],
+              "port": "8000"
+            },
+            "description": "Sin Authorization header: debe devolver 401 Unauthorized (IsAuthenticatedOrReadOnly).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"producto\": 1,\n  \"autor\": \"Sin token\",\n  \"calificacion\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           },
           "response": []
         }
@@ -656,6 +874,16 @@
     {
       "key": "base_url",
       "value": "http://127.0.0.1:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
       "type": "string"
     }
   ]
